@@ -4,6 +4,8 @@ import io.github.devrawr.practice.extensions.player
 import org.bukkit.ChatColor
 import java.util.*
 
+@Suppress("DEPRECATION")
+@Deprecated("Should use Kit#createTeamFromIds() for more accurate instantiation, as it creates match team of specific type.")
 open class MatchTeam(
     val ids: MutableMap<UUID, Boolean>
 )
@@ -33,7 +35,12 @@ open class MatchTeam(
     fun retrieveAlive(): List<UUID>
     {
         return this.ids.filter {
-            !it.value
+            it.value
         }.keys.toList()
+    }
+
+    open fun death(id: UUID)
+    {
+        ids[id] = false
     }
 }

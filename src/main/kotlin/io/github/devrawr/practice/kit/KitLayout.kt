@@ -15,7 +15,7 @@ class KitLayout(val name: String)
 
     fun equip(team: MatchTeam)
     {
-        team.ids.forEach {
+        team.ids.keys.forEach {
             equip(it)
         }
     }

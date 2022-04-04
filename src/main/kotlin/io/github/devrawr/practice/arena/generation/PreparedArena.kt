@@ -15,6 +15,7 @@ class PreparedArena(
     var currentMatch: Match? = null
 
     // TODO: 4/4/2022 maybe call this on match end or something?
+    // NOTE: despite its name, this should not be a finalize() block.
     fun destruct()
     {
         val match = currentMatch

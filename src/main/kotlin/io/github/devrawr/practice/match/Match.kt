@@ -100,6 +100,8 @@ class Match(
             )
         )
 
+        team.death(id)
+
         if (team.retrieveAlive().isEmpty())
         {
 
