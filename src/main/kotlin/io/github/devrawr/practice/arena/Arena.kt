@@ -14,6 +14,7 @@ class Arena(val id: String)
     var buildFromLocation: Location? = null
 
     val preparedArenas = mutableListOf<PreparedArena>()
+    
     val nextPreparedArena: PreparedArena
         get()
         {

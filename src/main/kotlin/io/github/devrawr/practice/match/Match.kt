@@ -2,14 +2,20 @@ package io.github.devrawr.practice.match
 
 import io.github.devrawr.practice.arena.Arena
 import io.github.devrawr.practice.kit.Kit
+import io.github.devrawr.practice.match.event.type.MatchCreateEvent
+import io.github.devrawr.practice.match.event.type.MatchEndEvent
+import io.github.devrawr.practice.match.event.type.MatchPlayerDeathEvent
+import io.github.devrawr.practice.match.event.type.MatchStartEvent
 import io.github.devrawr.practice.match.team.MatchTeam
 import io.github.devrawr.practice.match.tracking.TrackedBlock
 import io.github.devrawr.practice.match.tracking.TrackedBlockType
 import io.github.devrawr.tasks.Tasks
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
+import java.util.*
 
 class Match(
     val firstTeam: MatchTeam,
@@ -23,6 +29,15 @@ class Match(
 
     val trackedBlocks = mutableListOf<TrackedBlock>()
     val preparedArena = arena.nextPreparedArena
+
+    init
+    {
+        Bukkit.getPluginManager().callEvent(
+            MatchCreateEvent(
+                this
+            )
+        )
+    }
 
     fun start()
     {
@@ -50,6 +65,58 @@ class Match(
                     }
                 }
             }.cancelAfter(20 * 5)
+
+        Tasks
+            .async()
+            .delay(20 * 5) {
+                execute {
+                    Bukkit.getPluginManager().callEvent(
+                        MatchStartEvent(
+                            this
+                        )
+                    )
+                }
+            }
+    }
+
+    fun death(id: UUID)
+    {
+        val team = if (firstTeam.ids.contains(id))
+        {
+            firstTeam
+        } else if (secondTeam.ids.contains(id))
+        {
+            secondTeam
+        } else
+        {
+            throw IllegalArgumentException("$id is not a part of this match.")
+        }
+
+        Bukkit.getPluginManager().callEvent(
+            MatchPlayerDeathEvent(
+                match = this,
+                diedId = id,
+                diedTeam = team,
+            )
+        )
+
+        if (team.retrieveAlive().isEmpty())
+        {
+
+            Bukkit.getPluginManager().callEvent(
+                MatchEndEvent(
+                    this,
+                    winner = if (team == firstTeam)
+                    {
+                        secondTeam
+                    } else
+                    {
+                        firstTeam
+                    },
+                    loser = team
+                )
+            )
+        }
     }
 
     fun execute(action: (MatchTeam) -> Unit)

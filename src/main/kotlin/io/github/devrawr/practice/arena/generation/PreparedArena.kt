@@ -14,6 +14,7 @@ class PreparedArena(
 {
     var currentMatch: Match? = null
 
+    // TODO: 4/4/2022 maybe call this on match end or something?
     fun destruct()
     {
         val match = currentMatch

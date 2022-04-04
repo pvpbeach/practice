@@ -5,7 +5,7 @@ import org.bukkit.ChatColor
 import java.util.*
 
 open class MatchTeam(
-    val ids: List<UUID>
+    val ids: MutableMap<UUID, Boolean>
 )
 {
     fun sendMessage(message: String)
@@ -19,7 +19,7 @@ open class MatchTeam(
 
     fun execute(action: (UUID) -> Unit)
     {
-        for (id in ids)
+        for (id in ids.keys)
         {
             action(id)
         }
@@ -27,6 +27,13 @@ open class MatchTeam(
 
     fun retrieveFirst(): UUID?
     {
-        return this.ids.firstOrNull()
+        return this.ids.keys.firstOrNull()
+    }
+
+    fun retrieveAlive(): List<UUID>
+    {
+        return this.ids.filter {
+            !it.value
+        }.keys.toList()
     }
 }

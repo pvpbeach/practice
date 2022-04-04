@@ -4,6 +4,8 @@ import io.github.devrawr.events.Events
 import io.github.devrawr.practice.kit.KitFlag
 import io.github.devrawr.practice.match.MatchService
 import io.github.devrawr.practice.match.MatchState
+import io.github.devrawr.practice.match.event.type.MatchStartEvent
+import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -40,6 +42,14 @@ object MatchListener : Listener
             event.to = Location(
                 event.to.world, event.from.x, event.from.y, event.from.z, yaw, pitch
             )
+        }
+    }
+
+    @EventHandler
+    fun onStart(event: MatchStartEvent)
+    {
+        event.match.execute {
+            it.sendMessage("${ChatColor.GREEN}Started!")
         }
     }
 
