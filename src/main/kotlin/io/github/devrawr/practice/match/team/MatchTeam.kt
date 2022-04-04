@@ -5,7 +5,12 @@ import org.bukkit.ChatColor
 import java.util.*
 
 @Suppress("DEPRECATION")
-@Deprecated("Should use Kit#createTeamFromIds() for more accurate instantiation, as it creates match team of specific type.")
+@Deprecated(
+    "Should use Kit#createTeamFromIds() for more accurate instantiation, as it creates match team of specific type",
+    ReplaceWith(
+        "kit.createTeamFromIds(ids)"
+    )
+)
 open class MatchTeam(
     val ids: MutableMap<UUID, Boolean>
 )

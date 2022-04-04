@@ -22,7 +22,7 @@ class Kit(val id: String)
         }
 
         val map = ids
-            .associateWith { true }
+            .associateWith { true } // all players should be alive at this point, so associate them by true.
             .toMutableMap()
 
         // might have to change this method if more MatchTeam specific-kit-types get added.
