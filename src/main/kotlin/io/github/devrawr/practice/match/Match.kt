@@ -9,6 +9,8 @@ import io.github.devrawr.practice.match.event.type.MatchStartEvent
 import io.github.devrawr.practice.match.team.MatchTeam
 import io.github.devrawr.practice.match.tracking.TrackedBlock
 import io.github.devrawr.practice.match.tracking.TrackedBlockType
+import io.github.devrawr.practice.player.PlayerState
+import io.github.devrawr.practice.player.ProfileService
 import io.github.devrawr.tasks.Tasks
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -50,13 +52,20 @@ class Match(
     {
         this.state = MatchState.Starting
 
-        execute {
+        execute { team ->
+            // wanna do this first, considering it clears the player's inventory.
+            team.execute {
+                ProfileService
+                    .retrieveProfile(it)
+                    .state = PlayerState.Match
+            }
+
             // equip the kit for the team
-            kit.defaultLayout.equip(it)
+            kit.defaultLayout.equip(team)
 
             // teleport the team to their designated location
             preparedArena.teleport(
-                it, this
+                team, this
             )
         }
 
@@ -139,6 +148,14 @@ class Match(
 
         // this doesn't completely clear the arena, just sets it's state to not being used, and clears all placed blocks within the match.
         this.preparedArena.destruct()
+
+        execute { team ->
+            team.execute {
+                ProfileService
+                    .retrieveProfile(it)
+                    .state = PlayerState.Lobby
+            }
+        }
     }
 
     fun execute(action: (MatchTeam) -> Unit)

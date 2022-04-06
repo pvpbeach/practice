@@ -7,6 +7,10 @@ import io.github.devrawr.practice.match.MatchService
 import io.github.devrawr.practice.match.MatchState
 import io.github.devrawr.practice.match.MatchType
 import io.github.devrawr.practice.match.event.type.MatchStartEvent
+import io.github.devrawr.practice.player.PlayerState
+import io.github.devrawr.practice.player.Profile
+import io.github.devrawr.practice.player.ProfileService
+import io.github.devrawr.practice.util.ItemWrapper
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.Material
@@ -51,44 +55,27 @@ object MatchListener : Listener
         }
     }
 
+    private val unrankedQueue = ItemWrapper(Material.IRON_SWORD)
+        .displayName("${ChatColor.AQUA}Unranked Queue")
+        .index(0)
+        .action {
+            it.player.sendMessage("hey! you've clicked on Unranked Queue")
+        }
+
+    private val rankedQueue = ItemWrapper(Material.DIAMOND_SWORD)
+        .displayName("${ChatColor.AQUA}Ranked Queue")
+        .index(1)
+        .action {
+            it.player.sendMessage("hey! you've clicked on Ranked Queue")
+        }
+
     @EventHandler
     fun onJoin(event: PlayerJoinEvent)
     {
         val player = event.player
-        val inventory = player.inventory
+        val profile = ProfileService.retrieveProfile(player.uniqueId)
 
-        inventory.addItem(
-            ItemStack(
-                Material.IRON_SWORD
-            )
-        )
-
-        val kit = KitService.kits.first()
-
-        // add player to queue... temporary for testing!
-        val queue = kit
-            .retrieveQueueOfType(MatchType.Solo)
-
-        if (queue.entries.firstOrNull {
-                it.ids.containsKey(player.uniqueId)
-            } == null
-        )
-        {
-
-            val match = queue.queue(
-                kit.createTeamFromIds(
-                    listOf(player.uniqueId)
-                )
-            )
-
-            player.sendMessage("added to queue - ${queue.entries.size}")
-
-            if (match != null)
-            {
-                match.start()
-                player.sendMessage("match started")
-            }
-        }
+        profile.state = PlayerState.Lobby
     }
 
     @EventHandler
