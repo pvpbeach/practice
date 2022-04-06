@@ -25,7 +25,7 @@ val TEMPLATE_ARENA by lazy {
                 ArenaBlockData(
                     x = x.toDouble(),
                     z = z.toDouble(),
-                    y = 60.0,
+                    y = 40.0,
                     type = Material.GLASS,
                     data = 0
                 )

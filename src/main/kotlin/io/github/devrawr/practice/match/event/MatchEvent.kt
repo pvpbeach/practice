@@ -8,7 +8,13 @@ open class MatchEvent(val match: Match) : Event()
 {
     companion object
     {
-        val handlerList = HandlerList()
+        val HANDLERS = HandlerList()
+
+        @JvmStatic
+        fun getHandlerList(): HandlerList
+        {
+            return HANDLERS
+        }
     }
 
     val kit = match.kit
@@ -17,6 +23,6 @@ open class MatchEvent(val match: Match) : Event()
 
     override fun getHandlers(): HandlerList
     {
-        return handlerList
+        return HANDLERS
     }
 }

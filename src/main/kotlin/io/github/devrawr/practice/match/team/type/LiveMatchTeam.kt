@@ -10,10 +10,7 @@ import java.util.*
         "kit.createTeamFromIds(ids)"
     )
 )
-class LiveMatchTeam(
-    ids: MutableMap<UUID, Boolean>,
-    private val liveStart: Int = 5
-) : MatchTeam(ids)
+class LiveMatchTeam(ids: MutableMap<UUID, Boolean>, private val liveStart: Int = 5) : MatchTeam(ids)
 {
     private val lives = hashMapOf<UUID, Int>()
 

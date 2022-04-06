@@ -47,17 +47,18 @@ class PreparedArena(
 
     fun teleport(team: MatchTeam, index: Int)
     {
-        team.execute {
-            val location = if (index == 0)
-            {
-                arena.firstLocation
-            } else
-            {
-                arena.secondLocation
-            }
+        println(index)
+        val location = if (index == 0)
+        {
+            arena.firstLocation
+        } else
+        {
+            arena.secondLocation
+        }
 
-            if (location != null)
-            {
+        if (location != null)
+        {
+            team.execute {
                 it.player?.teleport(
                     location.clone()
                         .add(

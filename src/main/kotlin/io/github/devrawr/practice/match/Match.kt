@@ -17,6 +17,7 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import java.util.*
 
+@Suppress("DEPRECATION")
 class Match(
     val firstTeam: MatchTeam,
     val secondTeam: MatchTeam,
@@ -32,6 +33,12 @@ class Match(
 
     init
     {
+        execute { team ->
+            team.execute {
+                MatchService.matches[it] = this
+            }
+        }
+
         Bukkit.getPluginManager().callEvent(
             MatchCreateEvent(
                 this
@@ -41,6 +48,8 @@ class Match(
 
     fun start()
     {
+        this.state = MatchState.Starting
+
         execute {
             // equip the kit for the team
             kit.defaultLayout.equip(it)
@@ -56,10 +65,12 @@ class Match(
         Tasks
             .async()
             .repeating(0L, 20) {
-                execute {
-                    it.sendMessage("${ChatColor.YELLOW}${current--}...")
+                current--
 
-                    if (current <= 0)
+                execute {
+                    it.sendMessage("${ChatColor.YELLOW}${current}...")
+
+                    if (current <= 1)
                     {
                         state = MatchState.Started
                     }
@@ -69,13 +80,11 @@ class Match(
         Tasks
             .async()
             .delay(20 * 5) {
-                execute {
-                    Bukkit.getPluginManager().callEvent(
-                        MatchStartEvent(
-                            this
-                        )
+                Bukkit.getPluginManager().callEvent(
+                    MatchStartEvent(
+                        this
                     )
-                }
+                )
             }
     }
 
@@ -104,21 +113,32 @@ class Match(
 
         if (team.retrieveAlive().isEmpty())
         {
-
-            Bukkit.getPluginManager().callEvent(
-                MatchEndEvent(
-                    this,
-                    winner = if (team == firstTeam)
-                    {
-                        secondTeam
-                    } else
-                    {
-                        firstTeam
-                    },
-                    loser = team
-                )
+            this.endGame(
+                winner = if (team == this.firstTeam)
+                {
+                    secondTeam
+                } else
+                {
+                    firstTeam
+                },
+                loser = team
             )
         }
+    }
+
+    fun endGame(winner: MatchTeam, loser: MatchTeam)
+    {
+
+        Bukkit.getPluginManager().callEvent(
+            MatchEndEvent(
+                this,
+                winner = winner,
+                loser = loser
+            )
+        )
+
+        // this doesn't completely clear the arena, just sets it's state to not being used, and clears all placed blocks within the match.
+        this.preparedArena.destruct()
     }
 
     fun execute(action: (MatchTeam) -> Unit)

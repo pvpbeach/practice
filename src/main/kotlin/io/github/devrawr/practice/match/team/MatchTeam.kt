@@ -11,9 +11,7 @@ import java.util.*
         "kit.createTeamFromIds(ids)"
     )
 )
-open class MatchTeam(
-    val ids: MutableMap<UUID, Boolean>
-)
+open class MatchTeam(val ids: MutableMap<UUID, Boolean>)
 {
     fun sendMessage(message: String)
     {
