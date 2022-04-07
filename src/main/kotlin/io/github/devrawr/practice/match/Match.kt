@@ -190,4 +190,11 @@ class Match(
             TrackedBlockType.Place
         }
     ) = trackBlock(block.location, trackedBlockType)
+
+    fun isTrackedBlock(location: Location): Boolean
+    {
+        return this.trackedBlocks.any {
+            it.location.distance(location) <= 0
+        }
+    }
 }

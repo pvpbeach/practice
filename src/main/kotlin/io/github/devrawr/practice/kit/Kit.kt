@@ -56,6 +56,7 @@ class Kit(val id: String)
 enum class KitFlag
 {
     Build,
+    BreakAll,
 
     LiveKit,
     PointKit

@@ -13,8 +13,8 @@ val LOBBY_LAYOUT = Layout(
         ItemWrapper(Material.IRON_SWORD)
             .index(0)
             .displayName("${ChatColor.YELLOW}${ChatColor.BOLD}Unranked Queue")
-            .action {
-                val player = it.player
+            .action { event ->
+                val player = event.player
                 val kit = KitService.kits.first()
 
                 // add player to queue... temporary for testing!

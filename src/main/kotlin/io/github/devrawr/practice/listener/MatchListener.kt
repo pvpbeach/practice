@@ -1,11 +1,13 @@
 package io.github.devrawr.practice.listener
 
 import io.github.devrawr.events.Events
+import io.github.devrawr.practice.extensions.player
 import io.github.devrawr.practice.kit.KitFlag
 import io.github.devrawr.practice.kit.KitService
 import io.github.devrawr.practice.match.MatchService
 import io.github.devrawr.practice.match.MatchState
 import io.github.devrawr.practice.match.MatchType
+import io.github.devrawr.practice.match.event.type.MatchEndEvent
 import io.github.devrawr.practice.match.event.type.MatchStartEvent
 import io.github.devrawr.practice.player.PlayerState
 import io.github.devrawr.practice.player.Profile
@@ -55,20 +57,6 @@ object MatchListener : Listener
         }
     }
 
-    private val unrankedQueue = ItemWrapper(Material.IRON_SWORD)
-        .displayName("${ChatColor.AQUA}Unranked Queue")
-        .index(0)
-        .action {
-            it.player.sendMessage("hey! you've clicked on Unranked Queue")
-        }
-
-    private val rankedQueue = ItemWrapper(Material.DIAMOND_SWORD)
-        .displayName("${ChatColor.AQUA}Ranked Queue")
-        .index(1)
-        .action {
-            it.player.sendMessage("hey! you've clicked on Ranked Queue")
-        }
-
     @EventHandler
     fun onJoin(event: PlayerJoinEvent)
     {
@@ -83,6 +71,23 @@ object MatchListener : Listener
     {
         event.match.execute {
             it.sendMessage("${ChatColor.GREEN}Started!")
+        }
+    }
+
+    @EventHandler
+    fun onEnd(event: MatchEndEvent)
+    {
+        event.match.execute { team ->
+            listOf(
+                "&7&m${"-".repeat(32)}",
+                "&6Match Results",
+                "",
+                "&aWinner: ${ChatColor.WHITE}${event.winner.ids.keys.joinToString(", ") { it.player!!.name }}",
+                "&cLoser: ${ChatColor.WHITE}${event.loser.ids.keys.joinToString(", ") { it.player!!.name }}",
+                "&7&m${"-".repeat(32)}",
+            ).forEach {
+                team.sendMessage(it)
+            }
         }
     }
 
@@ -105,11 +110,24 @@ object MatchListener : Listener
                     if (player != null)
                     {
                         val match = MatchService.matches[player.uniqueId]
-                            ?: return@on
+
+                        if (match == null)
+                        {
+                            it.isCancelled = true
+                            return@on
+                        }
 
                         if (match.kit.flags.contains(KitFlag.Build))
                         {
                             it.isCancelled = true
+                            return@on
+                        }
+
+                        if (!match.isTrackedBlock(it.block.location) && !match.kit.flags.contains(KitFlag.BreakAll))
+                        {
+                            it.isCancelled =
+                                true // this is not a tracked block. don't let the players break non-tracked blocks.
+
                             return@on
                         }
 
