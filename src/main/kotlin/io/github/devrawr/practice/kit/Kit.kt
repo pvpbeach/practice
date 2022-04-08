@@ -30,7 +30,7 @@ class Kit(val id: String)
     @Suppress("DEPRECATION")
     fun createTeamFromIds(ids: List<UUID>): MatchTeam
     {
-        if (this.flags.contains(KitFlag.LiveKit) && this.flags.contains(KitFlag.PointKit))
+        if (this.flags.contains(KitFlag.LifeKit) && this.flags.contains(KitFlag.PointKit))
         {
             throw IllegalArgumentException("Kit has both LiveKit and PointKit flags, but should only have one of them.")
         }
@@ -40,7 +40,7 @@ class Kit(val id: String)
             .toMutableMap()
 
         // might have to change this method if more MatchTeam specific-kit-types get added.
-        return if (this.flags.contains(KitFlag.LiveKit))
+        return if (this.flags.contains(KitFlag.LifeKit))
         {
             LiveMatchTeam(map)
         } else if (this.flags.contains(KitFlag.PointKit))
@@ -58,6 +58,6 @@ enum class KitFlag
     Build,
     BreakAll,
 
-    LiveKit,
+    LifeKit,
     PointKit
 }

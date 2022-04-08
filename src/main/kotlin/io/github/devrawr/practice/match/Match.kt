@@ -1,6 +1,7 @@
 package io.github.devrawr.practice.match
 
 import io.github.devrawr.practice.arena.Arena
+import io.github.devrawr.practice.extensions.retrieveProfile
 import io.github.devrawr.practice.kit.Kit
 import io.github.devrawr.practice.match.event.type.MatchCreateEvent
 import io.github.devrawr.practice.match.event.type.MatchEndEvent
@@ -55,8 +56,7 @@ class Match(
         execute { team ->
             // wanna do this first, considering it clears the player's inventory.
             team.execute {
-                ProfileService
-                    .retrieveProfile(it)
+                it.retrieveProfile()
                     .state = PlayerState.Match
             }
 
@@ -151,8 +151,7 @@ class Match(
 
         execute { team ->
             team.execute {
-                ProfileService
-                    .retrieveProfile(it)
+                it.retrieveProfile()
                     .state = PlayerState.Lobby
             }
         }

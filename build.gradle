@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.github.devrawr:events:31631859a6'
     implementation 'com.github.devrawr:tasks:0385a06671'
     implementation 'com.github.devrawr:depenject:42af9d6a0b'
+    implementation 'com.github.devrawr:honey:9e2876f3ab'
 }

@@ -16,8 +16,6 @@ open class Layout(
         player.inventory.armorContents = null
         player.updateInventory()
 
-        player.sendMessage("cleared ur inv lol")
-
         for (item in items)
         {
             item.giveToPlayer(player)

@@ -15,7 +15,7 @@ class Arena(val id: String)
 
     val preparedArenas = mutableListOf<PreparedArena>()
     val appliedKitIds = mutableListOf<String>()
-    
+
     val nextPreparedArena: PreparedArena
         get()
         {
@@ -25,7 +25,7 @@ class Arena(val id: String)
             }
 
             var next = preparedArenas.firstOrNull {
-                it.currentMatch != null
+                it.currentMatch == null
             }
 
             if (next == null)
@@ -47,6 +47,8 @@ class Arena(val id: String)
                     offsetX,
                     offsetZ
                 )
+
+                preparedArenas.add(next)
             }
 
             return next

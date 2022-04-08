@@ -1,6 +1,7 @@
 package io.github.devrawr.practice.kit.queue
 
 import io.github.devrawr.practice.arena.ArenaService
+import io.github.devrawr.practice.extensions.retrieveProfile
 import io.github.devrawr.practice.kit.Kit
 import io.github.devrawr.practice.kit.KitService
 import io.github.devrawr.practice.match.Match
@@ -21,8 +22,7 @@ class Queue(val kit: Kit, val type: MatchType)
         team.execute {
             KitService.queueCache[it] = this
 
-            ProfileService
-                .retrieveProfile(it)
+            it.retrieveProfile()
                 .state = PlayerState.Queue
         }
 

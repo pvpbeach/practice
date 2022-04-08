@@ -58,15 +58,6 @@ object MatchListener : Listener
     }
 
     @EventHandler
-    fun onJoin(event: PlayerJoinEvent)
-    {
-        val player = event.player
-        val profile = ProfileService.retrieveProfile(player.uniqueId)
-
-        profile.state = PlayerState.Lobby
-    }
-
-    @EventHandler
     fun onStart(event: MatchStartEvent)
     {
         event.match.execute {
@@ -80,10 +71,9 @@ object MatchListener : Listener
         event.match.execute { team ->
             listOf(
                 "&7&m${"-".repeat(32)}",
-                "&6Match Results",
-                "",
-                "&aWinner: ${ChatColor.WHITE}${event.winner.ids.keys.joinToString(", ") { it.player!!.name }}",
-                "&cLoser: ${ChatColor.WHITE}${event.loser.ids.keys.joinToString(", ") { it.player!!.name }}",
+                "&6Post-Match Inventories &7(click name to view)",
+                "&aWinner: &e${event.winner.ids.keys.joinToString(", ") { it.player!!.name }}",
+                "&cLoser: &e${event.loser.ids.keys.joinToString(", ") { it.player!!.name }}",
                 "&7&m${"-".repeat(32)}",
             ).forEach {
                 team.sendMessage(it)
