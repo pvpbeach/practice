@@ -1,5 +1,6 @@
 package io.github.devrawr.practice.arena.generation
 
+import io.github.devrawr.tasks.Tasks
 import org.bukkit.DyeColor
 import org.bukkit.Location
 import org.bukkit.Material
@@ -36,17 +37,27 @@ val TEMPLATE_ARENA by lazy {
     return@lazy ArenaBuild(blocks)
 }
 
-class ArenaBuild(val blocks: List<ArenaBlockData>)
+class ArenaBuild(private val blocks: List<ArenaBlockData>)
 {
     fun generateAt(location: Location)
     {
-        for (block in blocks)
-        {
-            val loc = location.clone().add(block.x, block.y, block.z)
-            val type = block.type
+        val splitBlocks = blocks
+            .chunked(20)
 
-            loc.block.type = type
-            loc.block.data = block.data
+        splitBlocks.forEachIndexed { index, arenaBlockData ->
+            Tasks
+                .sync()
+                .delay(index * 5L) {
+                    arenaBlockData
+                        .filter { it.type == Material.AIR }
+                        .forEach {
+                            val loc = location.clone().add(it.x, it.y, it.z)
+                            val type = it.type
+
+                            loc.block.type = type
+                            loc.block.data = it.data
+                        }
+                }
         }
     }
 }

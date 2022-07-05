@@ -1,9 +1,11 @@
 package io.github.devrawr.practice.player.layout
 
+import io.github.devrawr.practice.PracticeConfig
 import io.github.devrawr.practice.kit.KitService
 import io.github.devrawr.practice.match.MatchType
 import io.github.devrawr.practice.player.PlayerState
 import io.github.devrawr.practice.util.ItemWrapper
+import io.github.devrawr.tasks.Tasks
 import org.bukkit.ChatColor
 import org.bukkit.Material
 
@@ -27,7 +29,6 @@ val LOBBY_LAYOUT = Layout(
                     } == null
                 )
                 {
-
                     val match = queue.queue(
                         kit.createTeamFromIds(
                             listOf(player.uniqueId)
@@ -38,12 +39,17 @@ val LOBBY_LAYOUT = Layout(
 
                     if (match != null)
                     {
-                        match.start()
-                        player.sendMessage("match started")
+                        Tasks
+                            .sync()
+                            .delay(40L) {
+                                match.start()
+                                player.sendMessage("${ChatColor.GREEN}${ChatColor.BOLD}Opponent found!")
+                            }
                     }
                 }
             }
-    )
+    ),
+    spawnLocation = PracticeConfig.LOBBY_LOCATION
 )
 
 val MATCH_LAYOUT = Layout("match-layout")

@@ -11,7 +11,6 @@ import io.github.devrawr.practice.match.team.MatchTeam
 import io.github.devrawr.practice.match.tracking.TrackedBlock
 import io.github.devrawr.practice.match.tracking.TrackedBlockType
 import io.github.devrawr.practice.player.PlayerState
-import io.github.devrawr.practice.player.ProfileService
 import io.github.devrawr.tasks.Tasks
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -42,11 +41,13 @@ class Match(
             }
         }
 
-        Bukkit.getPluginManager().callEvent(
-            MatchCreateEvent(
-                this
+        Bukkit
+            .getPluginManager()
+            .callEvent(
+                MatchCreateEvent(
+                    this
+                )
             )
-        )
     }
 
     fun start()
@@ -137,7 +138,6 @@ class Match(
 
     fun endGame(winner: MatchTeam, loser: MatchTeam)
     {
-
         Bukkit.getPluginManager().callEvent(
             MatchEndEvent(
                 this,
@@ -145,13 +145,14 @@ class Match(
                 loser = loser
             )
         )
-
         // this doesn't completely clear the arena, just sets it's state to not being used, and clears all placed blocks within the match.
         this.preparedArena.destruct()
 
         execute { team ->
             team.execute {
-                it.retrieveProfile()
+                MatchService.matches.remove(it)
+
+                it.retrieveProfile(false)
                     .state = PlayerState.Lobby
             }
         }
@@ -194,6 +195,13 @@ class Match(
     {
         return this.trackedBlocks.any {
             it.location.distance(location) <= 0
+        }
+    }
+
+    fun sendMessage(message: String)
+    {
+        execute {
+            it.sendMessage(message)
         }
     }
 }

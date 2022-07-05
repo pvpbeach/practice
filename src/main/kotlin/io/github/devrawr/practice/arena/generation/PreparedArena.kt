@@ -14,7 +14,6 @@ class PreparedArena(
 {
     var currentMatch: Match? = null
 
-    // TODO: 4/4/2022 maybe call this on match end or something?
     // NOTE: despite its name, this should not be a finalize() block.
     fun destruct()
     {
@@ -24,7 +23,10 @@ class PreparedArena(
         {
             for (block in match.trackedBlocks)
             {
-                block.location.block.type = Material.AIR
+                block
+                    .location
+                    .block
+                    .type = Material.AIR
             }
 
             this.currentMatch = null

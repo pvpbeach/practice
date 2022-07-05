@@ -4,15 +4,15 @@ import io.github.devrawr.practice.extensions.player
 import org.bukkit.ChatColor
 import java.util.*
 
+
+open class MatchTeam
 @Suppress("DEPRECATION")
 @Deprecated(
     "Should use Kit#createTeamFromIds() for more accurate instantiation, as it creates match team of specific type",
-    ReplaceWith(
-        "kit.createTeamFromIds(ids)"
-    )
-)
-open class MatchTeam(val ids: MutableMap<UUID, Boolean>)
+    ReplaceWith("kit.createTeamFromIds(ids)")
+) constructor(val ids: MutableMap<UUID, Boolean>)
 {
+
     fun sendMessage(message: String)
     {
         execute {

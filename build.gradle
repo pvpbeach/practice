@@ -3,7 +3,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-group 'io.github.devrawr.sync'
+group 'io.github.devrawr.practice'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -37,3 +37,17 @@ dependencies {
     implementation 'com.github.devrawr:depenject:42af9d6a0b'
     implementation 'com.github.devrawr:honey:9e2876f3ab'
 }
+
+shadowJar {
+    archiveClassifier.set("")
+
+    exclude "**/*.kotlin_metadata"
+    exclude "**/*.kotlin_builtins"
+    exclude "META-INF/"
+
+    archiveFileName = "uwupractice.jar"
+}
+
+tasks.build.dependsOn(
+        shadowJar
+)

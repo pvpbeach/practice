@@ -8,7 +8,7 @@ object ProfileService
 {
     private val repository = DataHandler
         .createStoreType<UUID, Profile>(
-            DataStoreType.REDIS // yep. we're using redis for storing. want reasoning? feel free to reach out to me on discord: string#0365
+            DataStoreType.MONGO // yep. we're using redis for storing. want reasoning? feel free to reach out to me on discord: string#0365
         )
 
     val profiles = hashMapOf<UUID, Profile>()

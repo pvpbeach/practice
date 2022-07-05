@@ -2,28 +2,25 @@ package io.github.devrawr.practice.listener
 
 import io.github.devrawr.events.Events
 import io.github.devrawr.practice.extensions.player
+import io.github.devrawr.practice.extensions.retrieveProfile
 import io.github.devrawr.practice.kit.KitFlag
-import io.github.devrawr.practice.kit.KitService
 import io.github.devrawr.practice.match.MatchService
 import io.github.devrawr.practice.match.MatchState
-import io.github.devrawr.practice.match.MatchType
 import io.github.devrawr.practice.match.event.type.MatchEndEvent
 import io.github.devrawr.practice.match.event.type.MatchStartEvent
-import io.github.devrawr.practice.player.PlayerState
-import io.github.devrawr.practice.player.Profile
 import io.github.devrawr.practice.player.ProfileService
-import io.github.devrawr.practice.util.ItemWrapper
+import io.github.devrawr.tasks.Tasks
 import org.bukkit.ChatColor
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.event.player.PlayerMoveEvent
-import org.bukkit.inventory.ItemStack
+import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.player.PlayerRespawnEvent
 
 object MatchListener : Listener
 {
@@ -72,12 +69,89 @@ object MatchListener : Listener
             listOf(
                 "&7&m${"-".repeat(32)}",
                 "&6Post-Match Inventories &7(click name to view)",
-                "&aWinner: &e${event.winner.ids.keys.joinToString(", ") { it.player!!.name }}",
-                "&cLoser: &e${event.loser.ids.keys.joinToString(", ") { it.player!!.name }}",
+                "&aWinner: &e${
+                    event.winner
+                        .ids
+                        .keys
+                        .joinToString(", ") { it.player?.name ?: "" }
+                }",
+                "&cLoser: &e${
+                    event.loser
+                        .ids
+                        .keys
+                        .joinToString(", ") { it.player?.name ?: "" }
+                }",
                 "&7&m${"-".repeat(32)}",
             ).forEach {
                 team.sendMessage(it)
             }
+        }
+    }
+
+    @EventHandler
+    fun onDeath(event: PlayerDeathEvent)
+    {
+        Tasks
+            .sync()
+            .delay(1L) {
+                event.entity
+                    .spigot()
+                    .respawn()
+            }
+    }
+
+    @EventHandler
+    fun onRespawn(event: PlayerRespawnEvent)
+    {
+        val player = event.player
+        val match = MatchService.matches[player.uniqueId]
+
+        match?.death(player.uniqueId)
+    }
+
+    @EventHandler
+    fun onDamage(event: EntityDamageEvent)
+    {
+        event.isCancelled = true
+
+        val entity = event.entity
+
+        if (MatchService.matches[entity.uniqueId] == null)
+        {
+            return
+        }
+
+        event.isCancelled = false
+    }
+
+    @EventHandler
+    fun onQuit(event: PlayerQuitEvent)
+    {
+        val player = event.player
+        val profile = player.uniqueId.retrieveProfile(false)
+
+        val queue = profile.queue
+        val match = profile.match
+
+        if (queue != null)
+        {
+            queue
+                .entries
+                .forEach {
+                    it.ids.remove(player.uniqueId)
+                }
+
+            queue
+                .entries
+                .removeIf {
+                    it.ids.isEmpty()
+                }
+        }
+
+        if (match != null)
+        {
+            match.death(player.uniqueId)
+            match.sendMessage("${ChatColor.RED}${player.name} ${ChatColor.GOLD}has disconnected.")
         }
     }
 

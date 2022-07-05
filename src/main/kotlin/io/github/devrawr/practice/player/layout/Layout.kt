@@ -14,16 +14,18 @@ open class Layout(
     {
         player.inventory.clear()
         player.inventory.armorContents = null
-        player.updateInventory()
+//        player.updateInventory()
+
+        player.health = player.maxHealth
+        player.foodLevel = 20
 
         for (item in items)
         {
             item.giveToPlayer(player)
         }
 
-        if (spawnLocation != null)
-        {
-            player.teleport(spawnLocation)
+        spawnLocation?.let {
+            player.teleport(it)
         }
     }
 }
