@@ -1,5 +1,6 @@
 package io.github.devrawr.practice.kit
 
+import io.github.devrawr.practice.extensions.player
 import io.github.devrawr.practice.kit.queue.Queue
 import io.github.devrawr.practice.match.MatchType
 import io.github.devrawr.practice.match.team.MatchTeam
@@ -11,7 +12,7 @@ import java.util.*
 class Kit(val id: String)
 {
     var icon = Material.DIAMOND_SWORD
-    var displayName = "${id}-display"
+    var displayName = id.capitalize()
     var defaultLayout: KitLayout = KitLayout("Default")
     var flags = mutableListOf<KitFlag>()
 
@@ -36,7 +37,7 @@ class Kit(val id: String)
         }
 
         val map = ids
-            .associateWith { true } // all players should be alive at this point, so associate them by true.
+            .associateWith { it.player?.isOnline == true } // all players should be alive at this point, so associate them by true.
             .toMutableMap()
 
         // might have to change this method if more MatchTeam specific-kit-types get added.
@@ -57,6 +58,7 @@ enum class KitFlag
 {
     Build,
     BreakAll,
+    DespawnBlock,
 
     LifeKit,
     PointKit

@@ -30,22 +30,27 @@ class Arena(val id: String)
 
             if (next == null)
             {
+                println("generating new next")
+
                 val offsetX = 200
                 val offsetZ = 0
+
+                val x = offsetX * (preparedArenas.size + 1)
+                val z = offsetZ * (preparedArenas.size + 1)
 
                 build.generateAt(
                     buildFromLocation!!.clone()
                         .add(
-                            offsetX.toDouble(),
+                            x.toDouble(),
                             0.0,
-                            offsetZ.toDouble()
+                            z.toDouble()
                         )
                 )
 
                 next = PreparedArena(
                     this,
-                    offsetX,
-                    offsetZ
+                    x,
+                    z
                 )
 
                 preparedArenas.add(next)

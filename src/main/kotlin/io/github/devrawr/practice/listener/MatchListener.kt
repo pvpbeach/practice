@@ -8,7 +8,6 @@ import io.github.devrawr.practice.match.MatchService
 import io.github.devrawr.practice.match.MatchState
 import io.github.devrawr.practice.match.event.type.MatchEndEvent
 import io.github.devrawr.practice.match.event.type.MatchStartEvent
-import io.github.devrawr.practice.player.ProfileService
 import io.github.devrawr.tasks.Tasks
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -181,13 +180,15 @@ object MatchListener : Listener
                             return@on
                         }
 
-                        if (match.kit.flags.contains(KitFlag.Build))
+                        if (!match.kit.flags.contains(KitFlag.Build))
                         {
                             it.isCancelled = true
                             return@on
                         }
 
-                        if (!match.isTrackedBlock(it.block.location) && !match.kit.flags.contains(KitFlag.BreakAll))
+                        if (it is BlockBreakEvent
+                            && !match.isTrackedBlock(it.block.location) && !match.kit.flags.contains(KitFlag.BreakAll)
+                        )
                         {
                             it.isCancelled =
                                 true // this is not a tracked block. don't let the players break non-tracked blocks.

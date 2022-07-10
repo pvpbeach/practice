@@ -8,8 +8,6 @@ import io.github.devrawr.practice.match.Match
 import io.github.devrawr.practice.match.MatchType
 import io.github.devrawr.practice.match.team.MatchTeam
 import io.github.devrawr.practice.player.PlayerState
-import io.github.devrawr.practice.player.ProfileService
-import org.bukkit.Bukkit
 
 class Queue(val kit: Kit, val type: MatchType)
 {

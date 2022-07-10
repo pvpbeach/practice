@@ -1,6 +1,8 @@
 package io.github.devrawr.practice
 
+import co.aikar.commands.BukkitCommandManager
 import io.github.devrawr.inject.Injector
+import io.github.devrawr.practice.kit.KitService
 import io.github.devrawr.practice.listener.GeneralListener
 import io.github.devrawr.practice.listener.MatchListener
 import io.github.nosequel.data.DataHandler
@@ -20,6 +22,9 @@ class PracticePlugin : JavaPlugin()
     override fun onEnable()
     {
         INSTANCE = this
+        val manager = BukkitCommandManager(this).apply {
+            this.enableUnstableAPI("help")
+        }
 
         DataHandler
             .withConnectionPool<NoAuthMongoConnectionPool> {
@@ -33,6 +38,7 @@ class PracticePlugin : JavaPlugin()
             .also {
                 it.bind<JavaPlugin>() to this
                 it.bind<Injector>() to it
+                it.bind<BukkitCommandManager>() to manager
             }
 
         // register listeners
@@ -40,6 +46,8 @@ class PracticePlugin : JavaPlugin()
             this,
             MatchListener, GeneralListener
         )
+
+        KitService.registerCommands()
     }
 }
 

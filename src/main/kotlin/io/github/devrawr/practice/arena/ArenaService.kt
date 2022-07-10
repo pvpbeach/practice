@@ -20,6 +20,7 @@ val TEMPLATE_ARENA = Arena("test-arena").apply {
     )
 
     this.appliedKitIds += "test"
+    this.appliedKitIds += "mommy"
 }
 
 object ArenaService

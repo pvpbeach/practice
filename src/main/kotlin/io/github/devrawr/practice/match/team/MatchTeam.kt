@@ -6,7 +6,6 @@ import java.util.*
 
 
 open class MatchTeam
-@Suppress("DEPRECATION")
 @Deprecated(
     "Should use Kit#createTeamFromIds() for more accurate instantiation, as it creates match team of specific type",
     ReplaceWith("kit.createTeamFromIds(ids)")

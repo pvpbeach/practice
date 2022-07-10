@@ -13,6 +13,11 @@ class PreparedArena(
 )
 {
     var currentMatch: Match? = null
+        get()
+        {
+            println("hi!!! $field")
+            return field
+        }
 
     // NOTE: despite its name, this should not be a finalize() block.
     fun destruct()
@@ -29,7 +34,7 @@ class PreparedArena(
                     .type = Material.AIR
             }
 
-            this.currentMatch = null
+//            this.currentMatch = null
         }
     }
 

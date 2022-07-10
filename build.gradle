@@ -25,6 +25,10 @@ repositories {
     maven {
         url 'https://jitpack.io'
     }
+
+    maven {
+        url "https://repo.aikar.co/content/groups/aikar/"
+    }
 }
 
 dependencies {
@@ -32,10 +36,13 @@ dependencies {
 
     compileOnly "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
 
+    implementation 'com.github.NoSequel:MenuAPI:a8560f4be7'
     implementation 'com.github.devrawr:events:31631859a6'
     implementation 'com.github.devrawr:tasks:0385a06671'
     implementation 'com.github.devrawr:depenject:42af9d6a0b'
     implementation 'com.github.devrawr:honey:9e2876f3ab'
+
+    implementation "co.aikar:acf-bukkit:0.5.1-SNAPSHOT"
 }
 
 shadowJar {
@@ -46,6 +53,12 @@ shadowJar {
     exclude "META-INF/"
 
     archiveFileName = "uwupractice.jar"
+}
+
+
+compileKotlin {
+    kotlinOptions.javaParameters = true
+    kotlinOptions.jvmTarget = "11"
 }
 
 tasks.build.dependsOn(

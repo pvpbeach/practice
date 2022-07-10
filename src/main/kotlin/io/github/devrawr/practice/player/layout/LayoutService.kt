@@ -2,7 +2,9 @@ package io.github.devrawr.practice.player.layout
 
 import io.github.devrawr.practice.PracticeConfig
 import io.github.devrawr.practice.kit.KitService
+import io.github.devrawr.practice.kit.queue.menu.QueueMenu
 import io.github.devrawr.practice.match.MatchType
+import io.github.devrawr.practice.match.team.MatchTeam
 import io.github.devrawr.practice.player.PlayerState
 import io.github.devrawr.practice.util.ItemWrapper
 import io.github.devrawr.tasks.Tasks
@@ -20,33 +22,9 @@ val LOBBY_LAYOUT = Layout(
                 val kit = KitService.kits.first()
 
                 // add player to queue... temporary for testing!
-                val queue = kit
-                    .retrieveQueueOfType(MatchType.Solo)
-
-                if (queue.entries.firstOrNull
-                    {
-                        it.ids.containsKey(player.uniqueId)
-                    } == null
-                )
-                {
-                    val match = queue.queue(
-                        kit.createTeamFromIds(
-                            listOf(player.uniqueId)
-                        )
-                    )
-
-                    player.sendMessage("added to queue - ${queue.entries.size}")
-
-                    if (match != null)
-                    {
-                        Tasks
-                            .sync()
-                            .delay(40L) {
-                                match.start()
-                                player.sendMessage("${ChatColor.GREEN}${ChatColor.BOLD}Opponent found!")
-                            }
-                    }
-                }
+                QueueMenu(
+                    player, kit.createTeamFromIds(listOf(player.uniqueId)), MatchType.Solo
+                ).updateMenu()
             }
     ),
     spawnLocation = PracticeConfig.LOBBY_LOCATION

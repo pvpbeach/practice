@@ -3,6 +3,7 @@ package io.github.devrawr.practice.match
 import io.github.devrawr.practice.arena.Arena
 import io.github.devrawr.practice.extensions.retrieveProfile
 import io.github.devrawr.practice.kit.Kit
+import io.github.devrawr.practice.kit.KitFlag
 import io.github.devrawr.practice.match.event.type.MatchCreateEvent
 import io.github.devrawr.practice.match.event.type.MatchEndEvent
 import io.github.devrawr.practice.match.event.type.MatchPlayerDeathEvent
@@ -53,6 +54,7 @@ class Match(
     fun start()
     {
         this.state = MatchState.Starting
+        this.preparedArena.currentMatch = this
 
         execute { team ->
             // wanna do this first, considering it clears the player's inventory.
@@ -178,6 +180,15 @@ class Match(
         this.trackedBlocks.add(
             TrackedBlock(location, trackedBlockType)
         )
+
+        if (kit.flags.contains(KitFlag.DespawnBlock))
+        {
+            Tasks
+                .sync()
+                .delay(20 * 5L) {
+                    location.block.type = Material.AIR
+                }
+        }
     }
 
     fun trackBlock(

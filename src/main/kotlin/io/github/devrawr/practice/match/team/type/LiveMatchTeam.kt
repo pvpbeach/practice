@@ -3,14 +3,14 @@ package io.github.devrawr.practice.match.team.type
 import io.github.devrawr.practice.match.team.MatchTeam
 import java.util.*
 
-@Suppress("DEPRECATION")
+class LiveMatchTeam
 @Deprecated(
     "Should use Kit#createTeamFromIds() for more accurate instantiation, as it creates match team of specific type",
     ReplaceWith(
         "kit.createTeamFromIds(ids)"
     )
 )
-class LiveMatchTeam(ids: MutableMap<UUID, Boolean>, private val liveStart: Int = 5) : MatchTeam(ids)
+constructor(ids: MutableMap<UUID, Boolean>, private val liveStart: Int = 5) : MatchTeam(ids)
 {
     private val lives = hashMapOf<UUID, Int>()
 
