@@ -61,5 +61,6 @@ enum class KitFlag
     DespawnBlock,
 
     LifeKit,
-    PointKit
+    PointKit,
+    BedRespawn
 }

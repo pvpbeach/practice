@@ -9,6 +9,7 @@ import io.github.devrawr.practice.match.event.type.MatchEndEvent
 import io.github.devrawr.practice.match.event.type.MatchPlayerDeathEvent
 import io.github.devrawr.practice.match.event.type.MatchStartEvent
 import io.github.devrawr.practice.match.team.MatchTeam
+import io.github.devrawr.practice.match.team.type.BedRespawnMatchTeam
 import io.github.devrawr.practice.match.tracking.TrackedBlock
 import io.github.devrawr.practice.match.tracking.TrackedBlockType
 import io.github.devrawr.practice.player.PlayerState
@@ -58,6 +59,7 @@ class Match(
 
         execute { team ->
             // wanna do this first, considering it clears the player's inventory.
+            team.match = this
             team.execute {
                 it.retrieveProfile()
                     .state = PlayerState.Match
@@ -102,16 +104,7 @@ class Match(
 
     fun death(id: UUID)
     {
-        val team = if (firstTeam.ids.contains(id))
-        {
-            firstTeam
-        } else if (secondTeam.ids.contains(id))
-        {
-            secondTeam
-        } else
-        {
-            throw IllegalArgumentException("$id is not a part of this match.")
-        }
+        val team = getTeam(id)
 
         Bukkit.getPluginManager().callEvent(
             MatchPlayerDeathEvent(
@@ -214,5 +207,51 @@ class Match(
         execute {
             it.sendMessage(message)
         }
+    }
+
+    fun getTeam(id: UUID): MatchTeam
+    {
+        return if (firstTeam.ids.contains(id))
+        {
+            firstTeam
+        } else if (secondTeam.ids.contains(id))
+        {
+            secondTeam
+        } else
+        {
+            throw IllegalArgumentException("$id is not a part of this match.")
+        }
+    }
+
+
+    fun getBedTeam(location: Location): BedRespawnMatchTeam?
+    {
+        if (location.block.type != Material.BED || firstTeam !is BedRespawnMatchTeam || secondTeam !is BedRespawnMatchTeam)
+        {
+            return null
+        }
+
+        val firstBedLocation = arena.firstBedLocation?.let {
+            preparedArena.getScaledLocation(it)
+        }
+
+        val secondBedLocation = arena.secondBedLocation?.let {
+            preparedArena.getScaledLocation(it)
+        }
+
+        if (firstBedLocation == null || secondBedLocation == null)
+        {
+            return null
+        }
+
+        if (firstBedLocation.distanceSquared(location) < 1)
+        {
+            return firstTeam
+        } else if (secondBedLocation.distanceSquared(location) < 1)
+        {
+            return secondTeam
+        }
+
+        return null
     }
 }

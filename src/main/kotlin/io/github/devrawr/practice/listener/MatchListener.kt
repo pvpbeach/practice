@@ -180,6 +180,13 @@ object MatchListener : Listener
                             return@on
                         }
 
+                        val bedTeam = match.getBedTeam(it.block.location)
+
+                        if (bedTeam != null)
+                        {
+                            bedTeam.destroyedBed = true
+                        }
+
                         if (!match.kit.flags.contains(KitFlag.Build))
                         {
                             it.isCancelled = true

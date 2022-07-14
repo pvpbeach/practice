@@ -4,7 +4,9 @@ import io.github.devrawr.practice.arena.Arena
 import io.github.devrawr.practice.extensions.player
 import io.github.devrawr.practice.match.Match
 import io.github.devrawr.practice.match.team.MatchTeam
+import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.entity.Player
 
 class PreparedArena(
     val arena: Arena,
@@ -13,11 +15,6 @@ class PreparedArena(
 )
 {
     var currentMatch: Match? = null
-        get()
-        {
-            println("hi!!! $field")
-            return field
-        }
 
     // NOTE: despite its name, this should not be a finalize() block.
     fun destruct()
@@ -38,23 +35,44 @@ class PreparedArena(
         }
     }
 
+    fun getScaledLocation(location: Location): Location
+    {
+        return location
+            .clone()
+            .add(
+                offsetX.toDouble(),
+                0.0,
+                offsetZ.toDouble()
+            )
+    }
+
+    fun teleport(player: Player, match: Match)
+    {
+        this.teleport(
+            player = player,
+            index = (match.firstTeam.ids.keys.contains(player.uniqueId)).compareTo(false)
+        )
+    }
+
     fun teleport(team: MatchTeam, match: Match)
     {
         this.teleport(
             team = team,
-            index = if (match.firstTeam == team)
-            {
-                0
-            } else
-            {
-                1
-            }
+            index = (match.firstTeam == team).compareTo(false)
         )
     }
 
     fun teleport(team: MatchTeam, index: Int)
     {
-        println(index)
+        team.execute { current ->
+            current.player?.let {
+                teleport(it, index)
+            }
+        }
+    }
+
+    fun teleport(player: Player, index: Int)
+    {
         val location = if (index == 0)
         {
             arena.firstLocation
@@ -65,16 +83,9 @@ class PreparedArena(
 
         if (location != null)
         {
-            team.execute {
-                it.player?.teleport(
-                    location.clone()
-                        .add(
-                            offsetX.toDouble(),
-                            0.0,
-                            offsetZ.toDouble()
-                        )
-                )
-            }
+            player.teleport(
+                getScaledLocation(location)
+            )
         }
     }
 }

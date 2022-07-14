@@ -13,6 +13,9 @@ class Arena(val id: String)
     var secondLocation: Location? = null
     var buildFromLocation: Location? = null
 
+    var firstBedLocation: Location? = null
+    var secondBedLocation: Location? = null
+
     val preparedArenas = mutableListOf<PreparedArena>()
     val appliedKitIds = mutableListOf<String>()
 

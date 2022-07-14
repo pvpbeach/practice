@@ -1,6 +1,7 @@
 package io.github.devrawr.practice.match.team
 
 import io.github.devrawr.practice.extensions.player
+import io.github.devrawr.practice.match.Match
 import org.bukkit.ChatColor
 import java.util.*
 
@@ -11,6 +12,7 @@ open class MatchTeam
     ReplaceWith("kit.createTeamFromIds(ids)")
 ) constructor(val ids: MutableMap<UUID, Boolean>)
 {
+    var match: Match? = null
 
     fun sendMessage(message: String)
     {
